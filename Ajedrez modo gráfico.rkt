@@ -1,0 +1,1150 @@
+#lang racket
+
+;PROYECTO FINAL PARA LA CLASE DE PROGRAMACIÓN I PIRMER SEMESTRE DEL 2019 (2019.IIS105 UTP)
+;Autor(es): Juan Alejandro Mora, Mateo Soto , Camilo Lopez , Stiven Castro
+
+
+;--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+;Se abren las ventanas del juego despues de llamar las librerias.
+;--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+(require (lib "graphics.ss""graphics"))
+(open-graphics)
+(define ventana (open-viewport "Ajedrez" 600  600))     
+(define alert 0)
+(define pix "imagen")
+
+
+;---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+;Se utliza recursividad para dibujar el tablero del ajedrez, despues de añadir un fondo, los cuadros son de 50X50 y ocupan un area total de 400X400, ademas de agregar los detalles estéticos
+;---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+(((draw-pixmap-posn "images/chess.jpg" ) ventana)(make-posn 0 0))
+((draw-solid-rectangle ventana)(make-posn 45 45) 410 410 "brown")
+(define (dibujar a b e)
+
+  (if (> e 8)
+      (void)
+      (if (> a 400)
+            (dibujar 50 (+ b 50) (+ e 1))
+            (begin
+              (if(odd? e)
+                 (if(odd?(/ a 50))
+                    (begin
+                      ((draw-solid-rectangle ventana)(make-posn a b)50 50 "white")
+                      (dibujar(+ a 50)b e))
+                    (begin
+                      ((draw-solid-rectangle ventana)(make-posn a b)50 50 "gray")                 
+                      (dibujar(+ a 50)b e))
+                       
+                    )
+                 (if(odd?(/ a 50))
+                    (begin
+                      ((draw-solid-rectangle ventana)(make-posn a b)50 50 "gray")
+                      (dibujar(+ a 50)b e))
+                    (begin
+                      ((draw-solid-rectangle ventana)(make-posn a b)50 50 "white")
+                      (dibujar(+ a 50)b e))
+                       
+                    )
+                 )
+              )
+            )
+     )
+ 
+((draw-rectangle ventana)(make-posn 45 45) 410 410 "black")
+  )
+
+(dibujar 50 50 1)
+  
+;------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
+;Se dibuja el mapa de pixeles cada uno en su posición dentro de la ventana.                             
+;-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+(((draw-pixmap-posn "images/T2N.gif" 'gif/mask) ventana)(make-posn 60 400 ))
+(((draw-pixmap-posn "images/T1N.gif" 'gif/mask) ventana)(make-posn 410 400 ))
+
+(((draw-pixmap-posn "images/T1B.gif" 'gif/mask) ventana)(make-posn 60 50 ))
+(((draw-pixmap-posn "images/T2B.gif" 'gif/mask) ventana)(make-posn 410 50 ))
+
+(((draw-pixmap-posn "images/C2N.gif" 'gif/mask) ventana)(make-posn 110 400 ))
+(((draw-pixmap-posn "images/C1N.gif" 'gif/mask) ventana)(make-posn 360 400 ))
+
+(((draw-pixmap-posn "images/C1B.gif" 'gif/mask) ventana)(make-posn 110 50 ))
+(((draw-pixmap-posn "images/C2B.gif" 'gif/mask) ventana)(make-posn 360 50 ))
+
+(((draw-pixmap-posn "images/A2N.gif" 'gif/mask) ventana)(make-posn 160 400 ))
+(((draw-pixmap-posn "images/A1N.gif" 'gif/mask) ventana)(make-posn 310 400 ))
+
+(((draw-pixmap-posn "images/A1B.gif" 'gif/mask) ventana)(make-posn 160 50 ))
+(((draw-pixmap-posn "images/A2B.gif" 'gif/mask) ventana)(make-posn 310 50 ))
+
+(((draw-pixmap-posn "images/R0N.gif" 'gif/mask) ventana)(make-posn 260 400 ))
+(((draw-pixmap-posn "images/D0N.gif" 'gif/mask) ventana)(make-posn 210 400 ))
+
+(((draw-pixmap-posn "images/D0B.gif" 'gif/mask) ventana)(make-posn 260 50 ))
+(((draw-pixmap-posn "images/R0B.gif" 'gif/mask) ventana)(make-posn 210 50 ))
+
+(((draw-pixmap-posn "images/P1N.gif" 'gif/mask) ventana)(make-posn 60 350 ))
+(((draw-pixmap-posn "images/P2N.gif" 'gif/mask) ventana)(make-posn 110 350 ))
+(((draw-pixmap-posn "images/P3N.gif" 'gif/mask) ventana)(make-posn 160 350 ))
+(((draw-pixmap-posn "images/P4N.gif" 'gif/mask) ventana)(make-posn 210 350 ))
+(((draw-pixmap-posn "images/P5N.gif" 'gif/mask) ventana)(make-posn 260 350 ))
+(((draw-pixmap-posn "images/P6N.gif" 'gif/mask) ventana)(make-posn 310 350 ))
+(((draw-pixmap-posn "images/P7N.gif" 'gif/mask) ventana)(make-posn 360 350 ))
+(((draw-pixmap-posn "images/P8N.gif" 'gif/mask) ventana)(make-posn 410 350 ))
+
+(((draw-pixmap-posn "images/P1B.gif" 'gif/mask) ventana)(make-posn 60 100 ))
+(((draw-pixmap-posn "images/P2B.gif" 'gif/mask) ventana)(make-posn 110 100 ))
+(((draw-pixmap-posn "images/P3B.gif" 'gif/mask) ventana)(make-posn 160 100 ))
+(((draw-pixmap-posn "images/P4B.gif" 'gif/mask) ventana)(make-posn 210 100 ))
+(((draw-pixmap-posn "images/P5B.gif" 'gif/mask) ventana)(make-posn 260 100 ))
+(((draw-pixmap-posn "images/P6B.gif" 'gif/mask) ventana)(make-posn 310 100 ))
+(((draw-pixmap-posn "images/P7B.gif" 'gif/mask) ventana)(make-posn 360 100 ))
+(((draw-pixmap-posn "images/P8B.gif" 'gif/mask) ventana)(make-posn 410 100 ))
+
+(((draw-pixmap-posn "images/vacio.gif" 'gif/mask) ventana)(make-posn 60 150 ))
+(((draw-pixmap-posn "images/vacio.gif" 'gif/mask) ventana)(make-posn 110 150 ))
+(((draw-pixmap-posn "images/vacio.gif" 'gif/mask) ventana)(make-posn 160 150 ))
+(((draw-pixmap-posn "images/vacio.gif" 'gif/mask) ventana)(make-posn 210 150 ))
+(((draw-pixmap-posn "images/vacio.gif" 'gif/mask) ventana)(make-posn 260 150 ))
+(((draw-pixmap-posn "images/vacio.gif" 'gif/mask) ventana)(make-posn 310 150 ))
+(((draw-pixmap-posn "images/vacio.gif" 'gif/mask) ventana)(make-posn 360 150 ))
+(((draw-pixmap-posn "images/vacio.gif" 'gif/mask) ventana)(make-posn 410 150 ))
+
+(((draw-pixmap-posn "images/vacio.gif" 'gif/mask) ventana)(make-posn 60 200 ))
+(((draw-pixmap-posn "images/vacio.gif" 'gif/mask) ventana)(make-posn 110 200 ))
+(((draw-pixmap-posn "images/vacio.gif" 'gif/mask) ventana)(make-posn 160 200 ))
+(((draw-pixmap-posn "images/vacio.gif" 'gif/mask) ventana)(make-posn 210 200 ))
+(((draw-pixmap-posn "images/vacio.gif" 'gif/mask) ventana)(make-posn 260 200 ))
+(((draw-pixmap-posn "images/vacio.gif" 'gif/mask) ventana)(make-posn 310 200 ))
+(((draw-pixmap-posn "images/vacio.gif" 'gif/mask) ventana)(make-posn 360 200 ))
+(((draw-pixmap-posn "images/vacio.gif" 'gif/mask) ventana)(make-posn 410 200 ))
+
+(((draw-pixmap-posn "images/vacio.gif" 'gif/mask) ventana)(make-posn 60 250 ))
+(((draw-pixmap-posn "images/vacio.gif" 'gif/mask) ventana)(make-posn 110 250 ))
+(((draw-pixmap-posn "images/vacio.gif" 'gif/mask) ventana)(make-posn 160 250 ))
+(((draw-pixmap-posn "images/vacio.gif" 'gif/mask) ventana)(make-posn 210 250 ))
+(((draw-pixmap-posn "images/vacio.gif" 'gif/mask) ventana)(make-posn 260 250 ))
+(((draw-pixmap-posn "images/vacio.gif" 'gif/mask) ventana)(make-posn 310 250 ))
+(((draw-pixmap-posn "images/vacio.gif" 'gif/mask) ventana)(make-posn 360 250 ))
+(((draw-pixmap-posn "images/vacio.gif" 'gif/mask) ventana)(make-posn 410 250 ))
+
+(((draw-pixmap-posn "images/vacio.gif" 'gif/mask) ventana)(make-posn 60 300 ))
+(((draw-pixmap-posn "images/vacio.gif" 'gif/mask) ventana)(make-posn 110 300 ))
+(((draw-pixmap-posn "images/vacio.gif" 'gif/mask) ventana)(make-posn 160 300 ))
+(((draw-pixmap-posn "images/vacio.gif" 'gif/mask) ventana)(make-posn 210 300 ))
+(((draw-pixmap-posn "images/vacio.gif" 'gif/mask) ventana)(make-posn 260 300 ))
+(((draw-pixmap-posn "images/vacio.gif" 'gif/mask) ventana)(make-posn 310 300 ))
+(((draw-pixmap-posn "images/vacio.gif" 'gif/mask) ventana)(make-posn 360 300 ))
+(((draw-pixmap-posn "images/vacio.gif" 'gif/mask) ventana)(make-posn 410 300 ))
+
+;-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+;MATRICES: En esta parte se definen 3 matrices, la primera (vec) es la del modo texto y la otra
+;         (posiciones) guarda las coordenadas donde están las fichas, para facilitar el dibujado
+;------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+(define vec (vector(vector "f\\C" " 1 " " 2 " " 3 " " 4 " " 5 " " 6 " " 7 " " 8 ")
+                   (vector " 1 " "T1B" "C1B" "A1B" "R0B" "D0B" "A2B" "C2B" "T2B" )
+                   (vector " 2 " "P1B" "P2B" "P3B" "P4B" "P5B" "P6B" "P7B" "P8B" )
+                   (vector " 3 " "   " "   " "   " "   " "   " "   " "   " "   " )
+                   (vector " 4 " "   " "   " "   " "   " "   " "   " "   " "   " )
+                   (vector " 5 " "   " "   " "   " "   " "   " "   " "   " "   " )
+                   (vector " 6 " "   " "   " "   " "   " "   " "   " "   " "   " )
+                   (vector " 7 " "P8N" "P7N" "P6N" "P5N" "P4N" "P3N" "P2N" "P1N" )
+                   (vector " 8 " "T2N" "C2N" "A2N" "D0N" "R0N" "A1N" "C1N" "T1N" )
+            )
+  )
+
+
+
+(define posiciones (vector (vector "f\\C"   " 1 "                 " 2 "               " 3 "            " 4 "                  " 5 "                 " 6 "            " 7 "                     " 8 "   )
+                           (vector "  1 " (make-posn 60 50 ) (make-posn 110 50 ) (make-posn 160 50 ) (make-posn 210 50 ) (make-posn 260 50 ) (make-posn 310 50 ) (make-posn 360 50 ) (make-posn 410 50 ))
+                           (vector "  2 " (make-posn 60 100) (make-posn 110 100) (make-posn 160 100) (make-posn 210 100) (make-posn 260 100) (make-posn 310 100) (make-posn 360 100) (make-posn 410 100))             
+                           (vector "  3 " (make-posn 60 150) (make-posn 110 150) (make-posn 160 150) (make-posn 210 150) (make-posn 260 150) (make-posn 310 150) (make-posn 360 150) (make-posn 410 150))
+                           (vector "  4 " (make-posn 60 200) (make-posn 110 200) (make-posn 160 200) (make-posn 210 200) (make-posn 260 200) (make-posn 310 200) (make-posn 360 200) (make-posn 410 200))
+                           (vector "  5 " (make-posn 60 250) (make-posn 110 250) (make-posn 160 250) (make-posn 210 250) (make-posn 260 250) (make-posn 310 250) (make-posn 360 250) (make-posn 410 250))
+                           (vector "  6 " (make-posn 60 300) (make-posn 110 300) (make-posn 160 300) (make-posn 210 300) (make-posn 260 300) (make-posn 310 300) (make-posn 360 300) (make-posn 410 300))
+                           (vector "  7 " (make-posn 60 350) (make-posn 110 350) (make-posn 160 350) (make-posn 210 350) (make-posn 260 350) (make-posn 310 350) (make-posn 360 350) (make-posn 410 350))
+                           (vector "8"    (make-posn 60 400) (make-posn 110 400) (make-posn 160 400) (make-posn 210 400) (make-posn 260 400) (make-posn 310 400) (make-posn 360 400) (make-posn 410 400))
+
+                    )
+  )
+;-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------                    
+;esta funcion es del modo texto, su función es unicamente facilitarle al desaarrollador ver los procesos que se van realazando a la vez que se ejecuta el juego en modo grafico
+;--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+(define ( imprimir fila col)
+  (if (= fila 9)
+      (void)
+      (begin
+        (if (= col 9)
+            (begin
+              (newline)
+               (displayln "   +---+---+---+---+---+---+---+---+")
+              (imprimir (+ fila 1) 0))
+            (begin
+              (display (vector-ref (vector-ref vec fila) col ))
+              (display "|")
+              (imprimir fila  (+ col 1)))))))
+(imprimir 0 0)
+
+;------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+;inicio de los procesos, se ejecuta el evaluador de estado de jaque, que se define en la linea 766, y tiene como argumentos una fila una columna y el turno
+;------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+(define (buscador tur)
+  
+  (if ( buscar1 vec 0 0 tur)
+      (begin(displayln " esta en jaque")
+            (set! alert (open-viewport "Alerta" 300  100))((draw-string alert) (make-posn 50 50) "UN JUGADOR ESTÁ EN JAQUE" "red")
+            )
+      (begin
+        (displayln "no esta en jaque")))
+;----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+;Se dibuja en la ventana un rectángulo que indica quien tiene el turno
+;----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  (if (odd? tur)
+    (begin ((draw-solid-rectangle ventana) (make-posn 300 500) 150 50 "white")((draw-string ventana) (make-posn 310 520) "TURNO BLANCAS" "black")((draw-rectangle ventana)(make-posn 300 500) 150 50 "black"))
+    (begin((draw-solid-rectangle ventana) (make-posn 300 500) 150 50 "white")((draw-string ventana) (make-posn 310 520) "TURNO NEGRAS" "black")((draw-rectangle ventana)(make-posn 300 500) 150 50 "black"))
+    )
+
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+;Define las coordenadas de la posicion inicial como los puntos x,y del primer click del usuario, luego pregunto si está dentro del rango permtido
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  (define click1 (get-mouse-click ventana))
+  (displayln "La fila inicial es:")
+  (define fila-inicial (quotient (posn-y (mouse-click-posn click1)) 50))
+  (displayln fila-inicial)
+  (displayln "La columna inicial es:")
+  (define columna-inicial (quotient (posn-x (mouse-click-posn click1)) 50))
+  (displayln columna-inicial)
+
+
+  (if (or (> fila-inicial 8) (< fila-inicial 1) (> columna-inicial 8 ) (< columna-inicial 1))
+      (begin
+      (buscador tur))
+      (void))
+
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+;Defino ficha como la cadena que extraiga de la matriz vec usando las coordenadas obtenidas con el click1, y reviso su color para determinar si es su turno, o si no hay ninguna ficha.
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  (define ficha (vector-ref (vector-ref vec fila-inicial) columna-inicial))
+
+  (if
+   (or
+      (and(equal?(string-ref ficha 2) #\B) (odd? tur))
+      (and(equal?(string-ref ficha 2) #\N) (even? tur))
+   )
+
+  (void)      
+       (if (equal? ficha "   ")
+       (buscador tur)
+       (begin
+       (set! alert (open-viewport "Alerta" 300  100))((draw-string alert) (make-posn 50 50) "NO ES SU TURNO" "red")       
+       (buscador tur)
+       
+          )
+     )
+       )
+ 
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+;Defino las coordenadas de las posicion final como los puntos x,y del segundo click del usuario, luego pregunto si está dentro del rango permtido
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+  (define click2 (get-mouse-click ventana))
+  (displayln "La fila final es:") 
+  (define fila-final (quotient (posn-y (mouse-click-posn click2)) 50))
+  (displayln fila-final)
+  (displayln "La columna Final es:")
+  (define columna-final (quotient (posn-x (mouse-click-posn click2)) 50))
+  (displayln columna-final)
+
+
+  (if (or (> fila-final 8) (< fila-final 1) (> columna-final 8 ) (< columna-final 1))
+      (begin
+        
+        (buscador tur))
+      (void))
+
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+;Defino ficha 2 como la cadena extraida de la matriz vec utilizando las coordenadas de click2.
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------  
+
+
+  (define ficha2 (vector-ref (vector-ref vec fila-final) columna-final))
+
+
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+;Utilizo un condicional para saber cual es la ficha que quiero mover y llamar a su respectiva función de movimiento.
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------  
+
+   (cond ((or(equal? ficha "T2N")(equal? ficha "T1N")(equal? ficha "T2B")(equal? ficha "T1B")) (torre fila-final columna-final fila-inicial columna-inicial ficha ficha2 tur))
+         ((or(equal? ficha "C2N")(equal? ficha "C1N")(equal? ficha "C1B")(equal? ficha "C2B")) (caballo fila-final columna-final fila-inicial columna-inicial ficha ficha2 tur))
+         ((or(equal? ficha "D0N")(equal? ficha "D0B"))(dama fila-final columna-final fila-inicial columna-inicial ficha ficha2 tur))
+         ((or(equal? ficha "R0N")(equal? ficha "R0B"))(rey fila-final columna-final fila-inicial columna-inicial ficha ficha2 tur))
+         ((or(equal? ficha "A2N")(equal? ficha "A1N")(equal? ficha "A1B")(equal? ficha "A2B")) (alfil fila-final columna-final fila-inicial columna-inicial ficha ficha2 tur))
+         ((or (equal? ficha "P1N")(equal? ficha "P2N")(equal? ficha "P3N")(equal? ficha "P4N")(equal? ficha "P5N")(equal? ficha "P6N")(equal? ficha "P7N")(equal? ficha "P8N")) (peon-negro fila-final columna-final fila-inicial columna-inicial ficha ficha2 tur))
+         ((or (equal? ficha "P1B")(equal? ficha "P2B")(equal? ficha "P3B")(equal? ficha "P4B")(equal? ficha "P5B")(equal? ficha "P6B")(equal? ficha "P7B")(equal? ficha "P8B")) (peon-blanco fila-final columna-final fila-inicial columna-inicial ficha ficha2 tur))
+         )
+
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+;Vuelve a preguntar si después de realizar el movimiento el jugador sigue en jaque, si es así, no permite hacerlo y devuelve las piezas a su lugar anterior, volviendo a realizar el turno, si el jugador ya no puede mover ninguna ficha el juego termina
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------  
+ 
+ (if ( buscar1 vec 0 0 tur)
+      (begin
+        (display "esta jugada no se puede hacer porque")
+        (vector-set! (vector-ref vec fila-final) columna-final ficha2)
+          (vector-set! (vector-ref vec  fila-inicial) columna-inicial ficha)
+          (buscador tur))
+      (void))
+
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+;por utlimo vuelvo a llamar la función imprimir con el movimiento realizado y llamo a su vez la función mover, que es la que trabaja con el entorno gráfico.
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------  
+
+(imprimir 0 0)
+(mover fila-inicial fila-final columna-inicial columna-final ficha pix)
+(buscador (+ tur 1)))
+
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+;se define la funcion mover, para trabajar los graficos, primero utlizo el condicional para asiganarle a la variable pix el nombre de la imagen a dibujar, dependiendo del valor de la variable ficha
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  (define  (mover fila-inicial fila-final columna-inicial columna-final ficha pix)
+ (cond   ((or(equal? ficha "T2N")(equal? ficha "T1N"))(set! pix "images/T2N.gif"))
+         ((or(equal? ficha "T2B")(equal? ficha "T1B")) (set! pix "images/T2B.gif"))
+         ((or(equal? ficha "C2N")(equal? ficha "C1N")) (set! pix "images/C2N.gif"))
+         ((or(equal? ficha "C1B")(equal? ficha "C2B")) (set! pix "images/C1B.gif"))
+         ((equal? ficha "D0N")(set! pix "images/D0N.gif"))
+         ((equal? ficha "D0B")(set! pix "images/D0B.gif"))
+         ((equal? ficha "R0N")(set! pix "images/R0N.gif"))
+         ((equal? ficha "R0B")(set! pix "images/R0B.gif"))
+         ((or(equal? ficha "A2N")(equal? ficha "A1N"))(set!  pix  "images/A2N.gif"))
+         ((or(equal? ficha "A1B")(equal? ficha "A2B")) (set! pix  "images/A2B.gif"))
+         ((or (equal? ficha "P1N")(equal? ficha "P2N")(equal? ficha "P3N")(equal? ficha "P4N")(equal? ficha "P5N")(equal? ficha "P6N")(equal? ficha "P7N")(equal? ficha "P8N")) (set! pix "images/P1N.gif"))
+         ((or (equal? ficha "P1B")(equal? ficha "P2B")(equal? ficha "P3B")(equal? ficha "P4B")(equal? ficha "P5B")(equal? ficha "P6B")(equal? ficha "P7B")(equal? ficha "P8B")) (set! pix "images/P1B.gif"))
+         )
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+;Creo la funcion color1, que reconoce el color de la casilla de la posicion final y dibuja un rectangulo para ocultar la ficha que pueda estar allí 
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------  
+ 
+(define color1
+ (if (even? (+ columna-final fila-final))
+     "white"
+     "gray"
+              )
+   )
+  
+  ((draw-solid-rectangle ventana)(vector-ref(vector-ref posiciones fila-final) columna-final) 30 50 color1)
+  
+
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+;aquí es donde muevo la ficha a su nuevo lugar, utilizando la matriz posiciones
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------  
+
+  (((draw-pixmap-posn pix 'gif/mask) ventana)(vector-ref (vector-ref posiciones fila-final)columna-final))
+                                        
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+;Creo la funcion color, que reconoce el color de la casilla de la posicion inicial y dibuja un rectangulo para ocultar la ficha que acabo de copiar en la posicion final, en su posicion inicial
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------  
+
+  (define color
+ (if (even? (+ columna-inicial fila-inicial))
+     "white"
+     "gray"
+              )
+   )
+
+  ((draw-solid-rectangle ventana)(vector-ref(vector-ref posiciones fila-inicial) columna-inicial) 30 50 color)
+    )
+
+
+
+
+
+
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+;                                                                                                 FUNCIONES DE MOVIMIENTO
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------    
+  
+
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+;Movimiento de la torre,llama la función medio-torre que evalua si hay una ficha en medio o si estoy atacando a una amiga, si no es asi ejecuta el movimiento.
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------    
+    
+  (define (torre fila-final columna-final fila-inicial columna-inicial ficha ficha2 tur)
+
+  (if (or (= fila-final fila-inicial) (= columna-final columna-inicial));movimiento en linea recta de torre
+
+        (if (medio-torre fila-inicial columna-inicial fila-final columna-final ficha ficha2);ficha en medio o fuego amigo
+            (begin
+             (vector-set! (vector-ref vec fila-final) columna-final ficha)
+             (vector-set! (vector-ref vec  fila-inicial) columna-inicial "   "));cambia pos en la matriz
+
+
+           (begin
+              (displayln "hay una ficha en medio")
+              (buscador tur)));else medio
+
+        (begin
+          (displayln "esta ficha no puede mover de esta forma intentelo de nuevo")
+          (buscador tur ))));else movimiento ilegal
+
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+; Movimiento del alfil, llama la función medio-alfil que evalua si hay una ficha en medio o si estoy atacando a una amiga, si no es asi ejecuta el movimiento.
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------    
+  
+
+(define (alfil fila-final columna-final fila-inicial columna-inicial ficha ficha2 tur)
+
+  (if (= (abs (- fila-inicial fila-final)) (abs (- columna-inicial columna-final)));movimiento en diagonal del alfil
+
+          (if (medio-alfil fila-inicial columna-inicial fila-final columna-final ficha ficha2);ficha en medio o fuego amigo
+
+              (begin
+                      (vector-set! (vector-ref vec fila-final) columna-final ficha)
+                      (vector-set! (vector-ref vec  fila-inicial) columna-inicial "   ");cambia pos en la matriz
+              )
+
+                     (begin
+                       (displayln " hay una ficha en el medio")
+                       (buscador tur));else medio
+          )
+
+
+          (begin
+                   (displayln "esta ficha no puede mover de esta forma intentelo de nuevo")
+                   (buscador tur));else movimiento ilegal
+      )
+  )
+
+
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+; Movimiento de la Dama, llama la función medio-dama que evalua si hay una ficha en medio o si estoy atacando a una amiga, si no es asi ejecuta el movimiento.
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------    
+
+
+(define (dama fila-final columna-final fila-inicial columna-inicial ficha ficha2 tur)
+       (if (or(=(abs (- fila-inicial fila-final)) (abs (- columna-inicial columna-final))) (or (= fila-final fila-inicial) (= columna-final columna-inicial)));movimiento de dama (fusión de alfil y torre)
+
+           (if(medio-dama fila-inicial columna-inicial fila-final columna-final ficha ficha2);ficha en medio o fuego amigo 
+            (begin
+          (vector-set! (vector-ref vec fila-final) columna-final ficha)
+          (vector-set! (vector-ref vec  fila-inicial) columna-inicial "   "));cambio pos en la matriz
+            (begin
+              (displayln "hay una ficha en el medio")
+              (buscador tur)));else medio
+           (begin
+          (displayln "esta ficha no puede mover de esta forma intentelo de nuevo")
+          (buscador tur))));else movimiento ilegal
+
+
+
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+; Movimiento del rey,pregunta si el movimiento es legal y si en la casilla objetivo hay una ficha amiga.
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------    
+(define (rey fila-final columna-final fila-inicial columna-inicial ficha ficha2 tur)
+
+  (if (or     (and (= fila-final (- fila-inicial 1)) (= columna-final (+ columna-inicial 1)))
+              (and (= fila-final (+ fila-inicial 1)) (= columna-final (- columna-inicial 1)))
+              (and (= fila-final (- fila-inicial 1)) (= columna-final (- columna-inicial 1)))
+              (and (= fila-final (+ fila-inicial 1)) (= columna-final (+ columna-inicial 1)))
+              (and (= fila-final fila-inicial ) (= columna-final (+ columna-inicial 1)))
+              (and (= fila-final fila-inicial ) (= columna-final (- columna-inicial 1)))
+              (and (= fila-final (+ fila-inicial 1)) (= columna-final columna-inicial))
+              (and (= fila-final (- fila-inicial 1)) (= columna-final columna-inicial)));movimiento rey
+
+          (if(equal? (vector-ref(vector-ref vec fila-final) columna-final) "   ");la pos final es?
+             (begin
+          (vector-set! (vector-ref vec fila-final) columna-final ficha)
+          (vector-set! (vector-ref vec  fila-inicial) columna-inicial "   "));cambia pos matriz
+             (if (or (and(equal? (string-ref ficha2 2) #\N) (equal? (string-ref ficha 2) #\B)) (and (equal? (string-ref ficha2 2 ) #\B) (equal? (string-ref ficha 2) #\N)));pregunta si la ficha es enemiga
+                 (begin
+                   (vector-set! (vector-ref vec fila-final) columna-final ficha)
+                   (vector-set! (vector-ref vec  fila-inicial) columna-inicial "   "));cambia pos matriz
+                 (begin
+                   (displayln "no puede hacer este movimiento intentelo de nuevo")
+                   (buscador tur))));else de fuego amigo
+             
+          (begin
+          (displayln "esta ficha no puede mover de esta forma intentelo de nuevo")
+          (buscador tur))));else de mov ilegal
+
+
+
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+; Movimiento del caballo,pregunta si el movimiento es legal y si en la casilla objetivo hay una ficha amiga.
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------    
+
+(define (caballo fila-final columna-final fila-inicial columna-inicial ficha ficha2 tur)
+
+  (if (or     (and (= fila-final (- fila-inicial 1)) (= columna-final (- columna-inicial 2)))
+              (and (= fila-final (- fila-inicial 1)) (= columna-final (+ columna-inicial 2)))
+              (and (= fila-final (+ fila-inicial 1)) (= columna-final (- columna-inicial 2)))
+              (and (= fila-final (+ fila-inicial 1)) (= columna-final (+ columna-inicial 2)))
+              (and (= fila-final (- fila-inicial 2)) (= columna-final (- columna-inicial 1)))
+              (and (= fila-final (- fila-inicial 2)) (= columna-final (+ columna-inicial 1)))
+              (and (= fila-final (+ fila-inicial 2)) (= columna-final (- columna-inicial 1)))
+              (and (= fila-final (+ fila-inicial 2)) (= columna-final (+ columna-inicial 1))));movimiento del caballo
+
+
+          (if(equal? (vector-ref(vector-ref vec fila-final) columna-final) "   ");la pos final es?
+             (begin
+          (vector-set! (vector-ref vec fila-final) columna-final ficha)
+          (vector-set! (vector-ref vec  fila-inicial) columna-inicial "   "));cambia pos matriz
+             (if (or (and(equal? (string-ref ficha2 2) #\N) (equal? (string-ref ficha 2) #\B)) (and (equal? (string-ref ficha2 2 ) #\B) (equal? (string-ref ficha 2) #\N)));pregunta si la ficha es enemiga
+                 (begin
+                   (vector-set! (vector-ref vec fila-final) columna-final ficha)
+                   (vector-set! (vector-ref vec  fila-inicial) columna-inicial "   "));cambia pos matriz
+                 (begin
+                   (displayln "no puede hacer este movimiento intentelo de nuevo")
+                   (buscador tur))));else fuego amigo
+             
+          (begin
+          (displayln "esta ficha no puede mover de esta forma intentelo de nuevo")
+          (buscador tur))));else movimiento ilegal
+
+
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+; Movimiento del peón blanco, pregunta si el movimiento es legal, ya sea si ataca o no.
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------    
+
+(define (peon-blanco fila-final columna-final fila-inicial columna-inicial ficha ficha2 tur)
+       (if (equal? ficha2  "   ");ficha 2 es ?
+
+
+           (if (and (= fila-inicial 2) (and (= fila-final (+ fila-inicial 2)) (= columna-final columna-inicial) (equal? (vector-ref (vector-ref vec (+ fila-inicial 1)) columna-inicial) "   ")));1er movimiento, permite avanzar 2 casillas
+               (begin
+                 (vector-set! (vector-ref vec fila-final) columna-final ficha)
+                 (vector-set! (vector-ref vec  fila-inicial) columna-inicial "   "));cambia pos en matriz
+
+
+               (if (and (> fila-inicial 1 ) (and (= fila-final (+ fila-inicial 1))(= columna-final columna-inicial)));movimiento de avance normal, de una casilla
+                   (begin
+                     (vector-set! (vector-ref vec fila-final) columna-final ficha)
+                     (vector-set! (vector-ref vec  fila-inicial) columna-inicial "   "));cambia pos en matriz
+                   (begin
+                     (displayln "esta ficha no puede mover de esta forma intentelo de nuevo")
+                     (buscador tur))))
+
+
+           (if (and (equal?(string-ref ficha2 2) #\N)(or (and (= fila-final (+ fila-inicial 1)) (= columna-final (+ columna-inicial 1))) (and (= fila-final (+ fila-inicial 1)) (= columna-final (- columna-inicial 1)))));movimiento de ataque, si la ficha es enemiga
+               (begin
+                 (vector-set! (vector-ref vec fila-final) columna-final ficha)
+                 (vector-set! (vector-ref vec  fila-inicial) columna-inicial "   "));cambia pos en matriz
+               (begin
+                 (displayln "esta ficha no puede mover de esta forma")
+                 (buscador tur)))))
+
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+; Movimiento del peón negro, pregunta si el movimiento es legal, ya sea si ataca o no.
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+(define (peon-negro fila-final columna-final fila-inicial columna-inicial ficha ficha2 tur)
+      (if (equal? ficha2  "   ")
+          (if (and (= fila-inicial 7) (and (= fila-final (- fila-inicial 2))  (= columna-final columna-inicial) (equal? (vector-ref(vector-ref vec (- fila-inicial 1)) columna-inicial) "   ")));1er movimiento, permite avanzar 2 casillas
+              (begin
+                (vector-set! (vector-ref vec fila-final) columna-final ficha)
+                (vector-set! (vector-ref vec  fila-inicial) columna-inicial "   "));cambia pos en matriz
+              (if (and (< fila-inicial 8 ) (and (= fila-final (- fila-inicial 1))(= columna-final columna-inicial)));movimiento normal, de una casilla
+                  (begin
+                    (vector-set! (vector-ref vec fila-final) columna-final ficha)
+                    (vector-set! (vector-ref vec  fila-inicial) columna-inicial "   "));cambia pos en matriz
+                  (begin
+                    (displayln "esta ficha no puede mover de esta forma intentelo de nuevo")
+                    (buscador tur))));else de movimientos normales ilegales
+          (if (and (equal?(string-ref ficha2 2) #\B)(or (and (= fila-final (- fila-inicial 1)) (= columna-final (- columna-inicial 1))) (and (= fila-final (- fila-inicial 1)) (= columna-final (+ columna-inicial 1)))));movimiento de ataque, si la ficha es enemiga
+              (begin
+                (vector-set! (vector-ref vec fila-final) columna-final ficha)
+                (vector-set! (vector-ref vec  fila-inicial) columna-inicial "   "));cambia pos en matriz
+              (begin
+                (display "esta ficha no puede mover de esta forma")
+                (buscador tur)))));else de movimiento de ataque ilegal
+
+
+
+
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+;                                                                                   FUNCIONES DE BUSQUEDA DE FICHAS EN MEDIO
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------    
+  
+
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+; busca una ficha en cada uno de los 4 movimientos de la torre, avanzando desde la pos inicial hasta encotar una ficha o hasta que llegue a pos final
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------    
+  
+(define (medio-torre fila-inicial columna-inicial fila-final columna-final ficha ficha2)
+
+
+  (cond
+
+   ((> fila-final fila-inicial)(if(equal? (vector-ref (vector-ref vec (+ fila-inicial 1)) columna-inicial) "   ")
+                                         (medio-torre (+ fila-inicial 1) columna-inicial fila-final columna-final ficha ficha2)
+                                   (if (and (equal? (string-ref ficha2 2) #\B) (= fila-final (+ fila-inicial 1)) (equal? (string-ref ficha 2) #\N))         ;Movimiento hacia la derecha
+                                       #t
+                                       (if (and (equal? (string-ref ficha2 2) #\N) (= fila-final (+ fila-inicial 1)) (equal? (string-ref ficha 2) #\B))
+                                           #t
+                                           #f))))
+                               
+
+
+   ((< fila-final fila-inicial)(if(equal? (vector-ref (vector-ref vec (- fila-inicial 1)) columna-inicial) "   ")
+                                  (medio-torre (- fila-inicial 1) columna-inicial fila-final columna-final ficha ficha2)
+                                  (if (and (equal? (string-ref ficha2 2) #\B) (= fila-final  (- fila-inicial 1)) (equal? (string-ref ficha 2) #\N))        ;Movimiento hacia la izquierda
+                                       #t
+                                       (if (and (equal? (string-ref ficha2 2) #\N) (= fila-final  (- fila-inicial 1)) (equal? (string-ref ficha 2) #\B))
+                                           #t
+                                           #f))))
+      
+
+
+   ((> columna-final columna-inicial)(if(equal? (vector-ref (vector-ref vec fila-inicial) (+ columna-inicial 1)) "   ")
+                                  (medio-torre fila-inicial (+ columna-inicial 1) fila-final columna-final ficha ficha2)
+                                  (if (and (equal? (string-ref ficha2 2) #\B) (= columna-final  (+ columna-inicial 1)) (equal? (string-ref ficha 2) #\N))      ;Movimiento hacia abajo
+                                       #t
+                                        (if (and (equal? (string-ref ficha2 2) #\N) (= columna-final  (+ columna-inicial 1)) (equal? (string-ref ficha 2) #\B))
+                                            #t
+                                            #f))))
+      
+
+
+
+   ((< columna-final columna-inicial)(if(equal? (vector-ref (vector-ref vec fila-inicial) (- columna-inicial 1)) "   ")
+                                  (medio-torre fila-inicial (- columna-inicial 1) fila-final columna-final ficha ficha2)
+                                  (if (and (equal? (string-ref ficha2 2) #\B) (= columna-final  (- columna-inicial 1)) (equal? (string-ref ficha 2) #\N))
+                                       #t
+                                       (if(and (equal? (string-ref ficha2 2) #\N) (= columna-final  (- columna-inicial 1)) (equal? (string-ref ficha 2) #\B))  ;Movimiento hacia arriba 
+                                          #t
+                                          #f))))
+  (else #t)))
+
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+;  busca una ficha en cada uno de los 4 movimientos del alfil, avanzando desde la pos inicial hasta encotar una ficha o hasta que llegue a pos final
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------    
+  
+
+(define (medio-alfil fila-inicial columna-inicial fila-final columna-final ficha ficha2)
+ (cond
+   ((and (> fila-final fila-inicial)(> columna-final columna-inicial)) (if(equal? (vector-ref (vector-ref vec (+ fila-inicial 1)) (+ columna-inicial 1)) "   ")
+                                                                          (medio-alfil (+ fila-inicial 1) (+ columna-inicial 1) fila-final columna-final ficha ficha2)
+                                                                          (if (and (equal? (string-ref ficha2 2) #\B) (= columna-final  (+ columna-inicial 1)) (= fila-final  (+ fila-inicial 1)) (equal? (string-ref ficha 2) #\N))
+                                                                              #t
+                                                                              (if(and (equal? (string-ref ficha2 2) #\N) (= columna-final  (+ columna-inicial 1)) (= fila-final  (+ fila-inicial 1)) (equal? (string-ref ficha 2) #\B))   ;diagonal abajo derecha
+                                                                                      #t
+                                                                                      #f))))
+
+   
+  ((and (< fila-final fila-inicial) (< columna-final columna-inicial)) (if(equal? (vector-ref (vector-ref vec (- fila-inicial 1)) (- columna-inicial 1)) "   ")
+                                                                          (medio-alfil (- fila-inicial 1) (- columna-inicial 1) fila-final columna-final ficha ficha2)
+                                                                          (if (and (equal? (string-ref ficha2 2) #\B) (= columna-final  (- columna-inicial 1)) (= fila-final  (- fila-inicial 1)) (equal? (string-ref ficha 2) #\N))    ;diagonal arriba izquierda
+                                                                              #t
+                                                                              (if(and (equal? (string-ref ficha2 2) #\N) (= columna-final  (- columna-inicial 1)) (= fila-final  (- fila-inicial 1)) (equal? (string-ref ficha 2) #\B))
+                                                                                      #t
+                                                                                      #f))))
+
+  
+      
+  ((and (> columna-final columna-inicial) (< fila-final fila-inicial)) (if(equal? (vector-ref (vector-ref vec (- fila-inicial 1)) (+ columna-inicial 1)) "   ")
+                                                                          (medio-alfil (- fila-inicial 1) (+ columna-inicial 1) fila-final columna-final ficha ficha2)
+                                                                           (if (and (equal? (string-ref ficha2 2) #\B) (= columna-final  (+ columna-inicial 1)) (= fila-final  (- fila-inicial 1)) (equal? (string-ref ficha 2) #\N))   ;diagonal arriba derecha
+                                                                               #t
+                                                                               (if(and (equal? (string-ref ficha2 2) #\N) (= columna-final  (+ columna-inicial 1)) (= fila-final  (- fila-inicial 1)) (equal? (string-ref ficha 2) #\B))
+                                                                                       #t
+                                                                                       #f))))
+      
+  ((and (< columna-final columna-inicial) (> fila-final fila-inicial)) (if(equal? (vector-ref (vector-ref vec (+ fila-inicial 1)) (- columna-inicial 1)) "   ")
+                                                                          (medio-alfil (+ fila-inicial 1) (- columna-inicial 1) fila-final columna-final ficha ficha2)
+                                                                           (if (and (equal? (string-ref ficha2 2) #\B) (= columna-final  (- columna-inicial 1)) (= fila-final  (+ fila-inicial 1)) (equal? (string-ref ficha 2) #\N))   ;diagonal abajo izquierda
+                                                                               #t
+                                                                               (if(and (equal? (string-ref ficha2 2) #\N) (= columna-final  (- columna-inicial 1)) (= fila-final  (+ fila-inicial 1)) (equal? (string-ref ficha 2) #\B))
+                                                                                  #t
+                                                                                  #f))))
+  (else #T)))
+
+
+
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+;  busca una ficha en cada uno de los 8 movimientos de la dama, avanzando desde la pos inicial hasta encotar una ficha o hasta que llegue a pos final
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------    
+
+(define (medio-dama fila-inicial columna-inicial fila-final columna-final ficha ficha2)
+
+  (cond
+
+    ((and (= columna-final columna-inicial) (> fila-final fila-inicial)) (if(equal? (vector-ref (vector-ref vec (+ fila-inicial 1)) columna-inicial) "   ")  ;Recto hacia abajo
+                                         (medio-dama (+ fila-inicial 1) columna-inicial fila-final columna-final ficha ficha2)
+                                   (if (and (equal? (string-ref ficha2 2) #\B) (= fila-final (+ fila-inicial 1)) (equal? (string-ref ficha 2) #\N))
+                                       #t
+                                       (if (and (equal? (string-ref ficha2 2) #\N) (= fila-final (+ fila-inicial 1)) (equal? (string-ref ficha 2) #\B))
+                                           #t
+                                           #f))))
+                               
+
+
+    ((and (= columna-final columna-inicial) (< fila-final fila-inicial)) (if(equal? (vector-ref (vector-ref vec (- fila-inicial 1)) columna-inicial) "   ") ;Recto hacia arriba
+                                  (medio-dama (- fila-inicial 1) columna-inicial fila-final columna-final ficha ficha2)
+                                  (if (and (equal? (string-ref ficha2 2) #\B) (= fila-final  (- fila-inicial 1)) (equal? (string-ref ficha 2) #\N))
+                                       #t
+                                       (if (and (equal? (string-ref ficha2 2) #\N) (= fila-final  (- fila-inicial 1)) (equal? (string-ref ficha 2) #\B))
+                                           #t
+                                           #f))))
+      
+
+
+    ((and (> columna-final columna-inicial)(= fila-final fila-inicial)) (if(equal? (vector-ref (vector-ref vec fila-inicial) (+ columna-inicial 1)) "   ")       ;Recto a la derecha
+                                  (medio-dama fila-inicial (+ columna-inicial 1) fila-final columna-final ficha ficha2)
+                                  (if (and (equal? (string-ref ficha2 2) #\B) (= columna-final  (+ columna-inicial 1)) (equal? (string-ref ficha 2) #\N))
+                                       #t
+                                        (if (and (equal? (string-ref ficha2 2) #\N) (= columna-final  (+ columna-inicial 1)) (equal? (string-ref ficha 2) #\B))
+                                            #t
+                                            #f))))
+      
+
+
+    ((and (< columna-final columna-inicial)(= fila-final fila-inicial)) (if(equal? (vector-ref (vector-ref vec fila-inicial) (- columna-inicial 1)) "   ")     ;Recto a la izquierda
+                                  (medio-dama fila-inicial (- columna-inicial 1) fila-final columna-final ficha ficha2)
+                                  (if (and (equal? (string-ref ficha2 2) #\B) (= columna-final  (- columna-inicial 1)) (equal? (string-ref ficha 2) #\N))
+                                       #t
+                                       (if(and (equal? (string-ref ficha2 2) #\N) (= columna-final  (- columna-inicial 1)) (equal? (string-ref ficha 2) #\B))
+                                          #t
+                                          #f))))
+
+
+
+
+
+   ((and (> fila-final fila-inicial)(> columna-final columna-inicial)) (if(equal? (vector-ref (vector-ref vec (+ fila-inicial 1)) (+ columna-inicial 1)) "   ")
+                                                              (medio-dama (+ fila-inicial 1) (+ columna-inicial 1) fila-final columna-final ficha ficha2)
+                                                                (if (and (equal? (string-ref ficha2 2) #\B) (= columna-final  (+ columna-inicial 1)) (= fila-final  (+ fila-inicial 1)) (equal? (string-ref ficha 2) #\N)) ;Diagonal abajo derecha
+                                                                      #t
+                                                                 (if(and (equal? (string-ref ficha2 2) #\N) (= columna-final  (+ columna-inicial 1)) (= fila-final  (+ fila-inicial 1)) (equal? (string-ref ficha 2) #\B))
+                                                                       #t
+                                                                       #f))))
+
+
+
+
+
+
+    ((and (< fila-final fila-inicial) (< columna-final columna-inicial)) (if(equal? (vector-ref (vector-ref vec (- fila-inicial 1)) (- columna-inicial 1)) "   ")
+                                                                          (medio-dama (- fila-inicial 1) (- columna-inicial 1) fila-final columna-final ficha ficha2)
+                                                                          (if (and (equal? (string-ref ficha2 2) #\B) (= columna-final  (- columna-inicial 1)) (= fila-final  (- fila-inicial 1)) (equal? (string-ref ficha 2) #\N))     ;Diagonal arriba izquierda
+                                                                              #t
+                                                                              (if(and (equal? (string-ref ficha2 2) #\N) (= columna-final  (- columna-inicial 1)) (= fila-final  (- fila-inicial 1)) (equal? (string-ref ficha 2) #\B))
+                                                                                      #t
+                                                                                      #f))))
+      
+
+
+
+
+    ((and (> columna-final columna-inicial) (< fila-final fila-inicial)) (if(equal? (vector-ref (vector-ref vec (- fila-inicial 1)) (+ columna-inicial 1)) "   ")
+                                                                          (medio-dama (- fila-inicial 1) (+ columna-inicial 1) fila-final columna-final ficha ficha2)
+                                                                           (if (and (equal? (string-ref ficha2 2) #\B) (= columna-final  (+ columna-inicial 1)) (= fila-final  (- fila-inicial 1)) (equal? (string-ref ficha 2) #\N))   ;Diagonal abajo izquierda
+                                                                               #t
+                                                                               (if(and (equal? (string-ref ficha2 2) #\N) (= columna-final  (+ columna-inicial 1)) (= fila-final  (- fila-inicial 1)) (equal? (string-ref ficha 2) #\B))
+                                                                                       #t
+                                                                                       #f))))
+      
+
+
+
+
+
+    ((and (< columna-final columna-inicial) (> fila-final fila-inicial)) (if(equal? (vector-ref (vector-ref vec (+ fila-inicial 1)) (- columna-inicial 1)) "   ")
+                                                                          (medio-dama (+ fila-inicial 1) (- columna-inicial 1) fila-final columna-final ficha ficha2)
+                                                                           (if (and (equal? (string-ref ficha2 2) #\B) (= columna-final  (- columna-inicial 1)) (= fila-final  (+ fila-inicial 1)) (equal? (string-ref ficha 2) #\N))    ;Diagonal arriba derecha
+                                                                               #t
+                                                                               (if(and (equal? (string-ref ficha2 2) #\N) (= columna-final  (- columna-inicial 1)) (= fila-final  (+ fila-inicial 1)) (equal? (string-ref ficha 2) #\B))
+                                                                                  #t
+                                                                                  #f))))
+  (else #t)))
+;-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+;el bloque de codigo se ocupa de evaluar cada posicion de la matriz en busca de el rey, ya se blanco o negro, para despues ejecutar la funcion (jaque)
+;que al final de su proceso nos retorna un booleano, que a su vez define si está en jaque o no, para continuar el proceso.
+;-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+(define ( buscar1 vec fila2 col2 tur)
+  (if (= fila2 9)
+      (void)
+      (begin
+        (if (= col2 9)
+             (buscar1 vec (+ fila2 1) 0 tur)
+            (if (or (and (odd? tur) (equal? (vector-ref (vector-ref vec fila2) col2) "R0B")) (and (even? tur) (equal? (vector-ref (vector-ref vec fila2) col2) "R0N")))
+                (if (jaque vec fila2 col2)
+                    #t
+                    #f)
+                (buscar1 vec fila2 (+ col2 1) tur))))))
+;-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+;Este bloque de codigo define la función jaque, la cual se encarga de evaluar absolutamente todas las posibilidades de jaque hacia el rey del turno correspondiente, hacia todas las drecciones
+;y con todos los movimientos de ataque del caballo, devuelve un booleano.
+;-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+(define (jaque vec fila2 col2)
+  (define rey-en-jaque (vector-ref (vector-ref vec fila2) col2))
+  (cond
+  ((arriba vec fila2 col2 rey-en-jaque ) #t)
+  ((abajo vec fila2 col2 rey-en-jaque ) #t)
+  ((izquierda vec  fila2 col2 rey-en-jaque ) #t)
+  ((derecha vec fila2 col2 rey-en-jaque ) #t) 
+  ((diagonal-izq-arri vec fila2 col2 rey-en-jaque ) #t)
+  ((diagonal-der-arri vec fila2 col2 rey-en-jaque ) #t)
+  ((diagonal-izq-aba vec fila2 col2 rey-en-jaque )  #t)
+  ((diagonal-der-aba vec fila2 col2 rey-en-jaque ) #t)
+  ((diagonal2-izq-arri vec fila2 col2 rey-en-jaque ) #t)
+  ((diagonal2-der-arri vec fila2 col2 rey-en-jaque ) #t)
+  ((diagonal2-izq-aba vec fila2 col2 rey-en-jaque ) #t)
+  ((diagonal2-der-aba vec fila2 col2 rey-en-jaque ) #t)
+    
+  ((arriba2 vec fila2 col2 rey-en-jaque ) #t)
+  ((abajo2 vec fila2 col2 rey-en-jaque ) #t)
+  ((izquierda2 vec fila2 col2 rey-en-jaque ) #t)
+  ((derecha2 vec fila2 col2 rey-en-jaque ) #t)
+  ((caballo1 vec fila2 col2 rey-en-jaque ) #t)
+  ((caballo2 vec fila2 col2 rey-en-jaque ) #t)
+  ((caballo3 vec fila2 col2 rey-en-jaque ) #t)
+  ((caballo4 vec fila2 col2 rey-en-jaque ) #t)
+  ((caballo5 vec fila2 col2 rey-en-jaque ) #t)
+  ((caballo6 vec fila2 col2 rey-en-jaque ) #t)
+  ((caballo7 vec fila2 col2 rey-en-jaque ) #t)
+  ((caballo8 vec fila2 col2 rey-en-jaque ) #t)
+  (else #f))
+)
+
+;-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+;evalua la posición superior del rey, desde la casilla inmediantamente superior, hasta la ultima del tablero, en busca de una Dama o Torre enemiga. de lo contrario, retorna #f
+;-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+(define (arriba vec fila2 col2 rey-en-jaque )
+  (if (<= (- fila2 1) 0)
+      #f
+  (if (or (> fila2 8) (< fila2 1) (> col2 8) (< col2 1))
+      #f
+      (if(or (and(and(equal? rey-en-jaque "R0N") (equal? (string-ref (vector-ref (vector-ref vec (- fila2 1)) col2) 2) #\B)) (or (equal? (string-ref (vector-ref (vector-ref vec (- fila2 1)) col2) 0) #\D) (equal? (string-ref (vector-ref (vector-ref vec (- fila2 1)) col2) 0) #\T)))
+         (and(and(equal? rey-en-jaque "R0B") (equal? (string-ref (vector-ref (vector-ref vec (- fila2 1)) col2) 2) #\N)) (or (equal? (string-ref (vector-ref (vector-ref vec (- fila2 1)) col2) 0) #\D) (equal? (string-ref (vector-ref (vector-ref vec (- fila2 1)) col2) 0) #\T))))
+         #t
+         (if (equal? (vector-ref (vector-ref vec (- fila2 1)) col2) "   ")
+                 (arriba vec (- fila2 1) col2 rey-en-jaque)
+                 #f)))))
+
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+;evalua la posición inferior del rey, desde la casilla inmediantamente inferior, hasta la ultima del tablero, en busca de una Dama o Torre enemiga. de lo contrario, retorna #f
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+(define (abajo vec fila2 col2 rey-en-jaque )
+  (if (>= (+ fila2 1) 9)
+      #f
+  (if (or (> fila2 8) (< fila2 1) (> col2 8) (< col2 1))    
+      #f
+          (if( or (and(and(equal? rey-en-jaque "R0B")(equal? (string-ref (vector-ref (vector-ref vec (+ fila2 1)) col2) 2) #\N)) (or (equal? (string-ref (vector-ref (vector-ref vec (+ fila2 1)) col2) 0) #\D) (equal? (string-ref (vector-ref (vector-ref vec (+ fila2 1)) col2) 0) #\T)))
+                  (and(and(equal? rey-en-jaque "R0N")(equal? (string-ref (vector-ref (vector-ref vec (+ fila2 1)) col2) 2) #\B)) (or (equal? (string-ref (vector-ref (vector-ref vec (+ fila2 1)) col2) 0) #\D) (equal? (string-ref (vector-ref (vector-ref vec (+ fila2 1)) col2) 0) #\T))))
+             #t
+             (if (equal? (vector-ref (vector-ref vec (+ fila2 1)) col2) "   ")
+                 (abajo vec (+ fila2 1) col2 rey-en-jaque)
+                 #f)))))
+
+
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+;evalua la posición a la izquierda del rey, desde la casilla inmediantamente anterior, hasta la ultima del tablero, en busca de una Dama o Torre enemiga. de lo contrario, retorna #f
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+   (define (izquierda vec fila2 col2 rey-en-jaque )
+     (if (<= (- col2 1) 0)
+         #f
+     (if (or (> fila2 8) (< fila2 1) (> col2 8) (< col2 1))
+      #f
+      (if(or (and (and(equal? rey-en-jaque "R0N") (equal? (string-ref (vector-ref (vector-ref vec fila2) (- col2 1)) 2) #\B)) (or (equal? (string-ref (vector-ref (vector-ref vec  fila2 ) (- col2 1)) 0) #\D) (equal? (string-ref (vector-ref (vector-ref vec fila2) (- col2 1)) 0) #\T)))
+         (and (and(equal? rey-en-jaque "R0B") (equal? (string-ref (vector-ref (vector-ref vec fila2) (- col2 1)) 2) #\N)) (or (equal? (string-ref (vector-ref (vector-ref vec  fila2 ) (- col2 1)) 0) #\D) (equal? (string-ref (vector-ref (vector-ref vec fila2) (- col2 1)) 0) #\T))))
+         #t
+         (if (equal? (vector-ref (vector-ref vec fila2) (- col2 1)) "   ")
+             (izquierda vec fila2 (- col2 1) rey-en-jaque)
+             #f)))))
+
+;--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+;evalua la posición a la derecha del rey, desde la casilla siguiente, hasta la ultima del tablero, en busca de una Dama o Torre enemiga. de lo contrario, retorna #f
+;--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+(define (derecha vec fila2 col2 rey-en-jaque )
+    (if (>= (+ col2 1) 9)
+        #f
+     (if (or (> fila2 8) (< fila2 1) (> col2 8) (< col2 1))
+      #f
+      (if(or (and (and(equal? rey-en-jaque "R0N")(equal? (string-ref (vector-ref (vector-ref vec fila2) (+ col2 1)) 2) #\B)) (or (equal? (string-ref (vector-ref (vector-ref vec  fila2 ) (+ col2 1)) 0) #\D) (equal? (string-ref (vector-ref (vector-ref vec fila2) (+ col2 1)) 0) #\T)))
+         (and (and(equal? rey-en-jaque "R0B")(equal? (string-ref (vector-ref (vector-ref vec fila2) (+ col2 1)) 2) #\N)) (or (equal? (string-ref (vector-ref (vector-ref vec  fila2 ) (+ col2 1)) 0) #\D) (equal? (string-ref (vector-ref (vector-ref vec fila2) (+ col2 1)) 0) #\T))))
+         #t
+         (if (equal? (vector-ref (vector-ref vec fila2) (+ col2 1)) "   ")
+             (derecha vec fila2 (+ col2 1) rey-en-jaque )
+             #f)))))
+
+;--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+;evalua la posición diagonal superior izquierda, hasta llegar a algun limite del tablero, sea la fila o columna, esto en busca de un alfil o dama enemiga, de lo contrario retorna #f
+;------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
+
+(define (diagonal-izq-arri vec fila2 col2 rey-en-jaque )
+   
+    (if (or (< (- fila2 1) 0) (< (- col2 1) 0))
+        #f
+    (if (or (> fila2 8) (< fila2 1) (> col2 8) (< col2 1))
+      #f
+       (if(or (and (and(equal? rey-en-jaque "R0N") (equal? (string-ref (vector-ref (vector-ref vec (- fila2 1)) (- col2 1)) 2) #\B)) (or (equal? (string-ref (vector-ref (vector-ref vec  (- fila2 1)) (- col2 1)) 0) #\D) (equal? (string-ref (vector-ref (vector-ref vec (- fila2 1)) (- col2 1)) 0) #\A)))
+          (and (and(equal? rey-en-jaque "R0B") (equal? (string-ref (vector-ref (vector-ref vec (- fila2 1)) (- col2 1)) 2) #\N)) (or (equal? (string-ref (vector-ref (vector-ref vec  (- fila2 1)) (- col2 1)) 0) #\D) (equal? (string-ref (vector-ref (vector-ref vec (- fila2 1)) (- col2 1)) 0) #\A))))
+          #t
+          (if (equal? (vector-ref (vector-ref vec (- fila2 1)) (- col2 1)) "   ")
+              (diagonal-izq-arri vec (- fila2 1) (- col2 1) rey-en-jaque)
+              #f)))))
+
+;-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+;evalua la posición diagonal superior derecha, hasta llegar a algun limite del tablero, sea la fila o columna, esto en busca de un alfil o dama enemiga, de lo contrario retorna #f
+;-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+   (define (diagonal-der-arri vec fila2 col2 rey-en-jaque  )
+      (if (or (< (- fila2 1) 0) (>= (+ col2 1) 9))
+          #f
+    (if (or (> fila2 8) (< fila2 1) (> col2 8) (< col2 1))
+      #f
+       (if(or (and (and(equal? rey-en-jaque "R0N") (equal? (string-ref (vector-ref (vector-ref vec (- fila2 1)) (+ col2 1)) 2) #\B)) (or (equal? (string-ref (vector-ref (vector-ref vec  (- fila2 1)) (+ col2 1)) 0) #\D) (equal? (string-ref (vector-ref (vector-ref vec (- fila2 1)) (+ col2 1)) 0) #\A)))
+          (and (and(equal? rey-en-jaque "R0B") (equal? (string-ref (vector-ref (vector-ref vec (- fila2 1)) (+ col2 1)) 2) #\N)) (or (equal? (string-ref (vector-ref (vector-ref vec  (- fila2 1)) (+ col2 1)) 0) #\D) (equal? (string-ref (vector-ref (vector-ref vec (- fila2 1)) (+ col2 1)) 0) #\A))))
+          #t
+          (if (equal? (vector-ref (vector-ref vec (- fila2 1)) (+ col2 1)) "   ")
+              (diagonal-der-arri vec (- fila2 1) (+ col2 1) rey-en-jaque)
+              #f)))))
+;------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+;evalua la posición diagonal inferior izquierda, hasta llegar a algun limite del tablero, sea la fila o columna, esto en busca de un alfil o dama enemiga, de lo contrario retorna #f
+;------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+   (define (diagonal-izq-aba vec fila2 col2 rey-en-jaque )
+     (if (or (>= (+ fila2 1) 9) (< (- col2 1) 0))
+             #f
+    (if (or (> fila2 8) (< fila2 1) (> col2 8) (< col2 1))
+      #f
+       (if(or (and (and(equal? rey-en-jaque "R0N") (equal? (string-ref (vector-ref (vector-ref vec (+ fila2 1)) (- col2 1)) 2) #\B)) (or (equal? (string-ref (vector-ref (vector-ref vec  (+ fila2 1)) (- col2 1)) 0) #\D) (equal? (string-ref (vector-ref (vector-ref vec (+ fila2 1)) (- col2 1)) 0) #\A)))
+          (and (and(equal? rey-en-jaque "R0B") (equal? (string-ref (vector-ref (vector-ref vec (+ fila2 1)) (- col2 1)) 2) #\N)) (or (equal? (string-ref (vector-ref (vector-ref vec  (+ fila2 1)) (- col2 1)) 0) #\D) (equal? (string-ref (vector-ref (vector-ref vec (+ fila2 1)) (- col2 1)) 0) #\A))))
+          #t
+          (if (equal? (vector-ref (vector-ref vec (+ fila2 1)) (- col2 1)) "   ")
+              (diagonal-izq-aba vec (+ fila2 1) (- col2 1) rey-en-jaque)
+              #f)))))
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+;evalua la posición diagonal inferior derecha, hasta llegar a algun limite del tablero, sea la fila o columna, esto en busca de un alfil o dama enemiga, de lo contrario retorna #f
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------    
+   (define (diagonal-der-aba vec fila2 col2 rey-en-jaque )
+     (if (or (>= (+ fila2 1) 9) (>= (+ col2 1) 9))
+       #f  
+    (if (or (> fila2 8) (< fila2 1) (> col2 8) (< col2 1))
+      #f
+       (if(or (and (and(equal? rey-en-jaque "R0N") (equal? (string-ref (vector-ref (vector-ref vec (+ fila2 1)) (+ col2 1)) 2) #\B)) (or (equal? (string-ref (vector-ref (vector-ref vec  (+ fila2 1)) (+ col2 1)) 0) #\D) (equal? (string-ref (vector-ref (vector-ref vec (+ fila2 1)) (+ col2 1)) 0) #\A)))
+          (and (and(equal? rey-en-jaque "R0B") (equal? (string-ref (vector-ref (vector-ref vec (+ fila2 1)) (+ col2 1)) 2) #\N)) (or (equal? (string-ref (vector-ref (vector-ref vec  (+ fila2 1)) (+ col2 1)) 0) #\D) (equal? (string-ref (vector-ref (vector-ref vec (+ fila2 1)) (+ col2 1)) 0) #\A))))
+          #t
+          (if (equal? (vector-ref (vector-ref vec (+ fila2 1)) (+ col2 1)) "   ")
+              (diagonal-der-aba vec (+ fila2 1) (+ col2 1) rey-en-jaque)
+              #f)))))
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+;evalua la posición diagonal superior izquierda, esto en busca de un rey, o peón si el rey es negro, de lo contrario retorna #f
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------  
+ (define (diagonal2-izq-arri vec fila2 col2 rey-en-jaque )
+    (if (or (< (- fila2 1) 0) (< (- col2 1) 0))
+        #f
+    (if (or (> fila2 8) (< fila2 1) (> col2 8) (< col2 1))
+      #f
+
+       (if(or (and (and (equal? rey-en-jaque "R0N") (equal? (string-ref (vector-ref (vector-ref vec (- fila2 1)) (- col2 1)) 2) #\B)) (or (equal? (string-ref (vector-ref (vector-ref vec  (- fila2 1)) (- col2 1)) 0) #\R) (equal? (string-ref (vector-ref (vector-ref vec (- fila2 1)) (- col2 1)) 0) #\P)))
+          (and (and (equal? rey-en-jaque "R0B") (equal? (string-ref (vector-ref (vector-ref vec (- fila2 1)) (- col2 1)) 2) #\N)) (or (equal? (string-ref (vector-ref (vector-ref vec  (- fila2 1)) (- col2 1)) 0) #\R))))
+          #t
+          #f))))
+
+;--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+;evalua la posición diagonal superior derecha, esto en busca de un rey, o peón si el rey es negro, de lo contrario retorna #f
+;--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+(define (diagonal2-der-arri vec fila2 col2 rey-en-jaque )
+    (if (or (< (- fila2 1) 0) (>= (+ col2 1) 9))
+        #f
+    (if (or (> fila2 8) (< fila2 1) (> col2 8) (< col2 1))
+      #f
+  
+       (if(or (and (and(equal? rey-en-jaque "R0N") (equal? (string-ref (vector-ref (vector-ref vec (- fila2 1)) (+ col2 1)) 2) #\B)) (or (equal? (string-ref (vector-ref (vector-ref vec  (- fila2 1)) (+ col2 1)) 0) #\R) (equal? (string-ref (vector-ref (vector-ref vec (- fila2 1)) (+ col2 1)) 0) #\P)))
+          (and (and(equal? rey-en-jaque "R0B") (equal? (string-ref (vector-ref (vector-ref vec (- fila2 1)) (+ col2 1)) 2) #\N)) (or (equal? (string-ref (vector-ref (vector-ref vec  (- fila2 1)) (+ col2 1)) 0) #\R))))
+          #t
+          #f))))
+;--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+;evalua la posición diagonal inferior izquierda, esto en busca de una dama, o peón si el rey es balanco, de lo contrario retorna #f
+;--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ (define (diagonal2-izq-aba vec fila2 col2 rey-en-jaque )
+     (if (or (>= (+ fila2 1) 9) (< (- col2 1) 0))
+             #f
+    (if (or (> fila2 8) (< fila2 1) (> col2 8) (< col2 1))
+      #f
+       (if(or (and (and(equal? rey-en-jaque "R0N") (equal? (string-ref (vector-ref (vector-ref vec (+ fila2 1)) (- col2 1)) 2) #\B)) (or (equal? (string-ref (vector-ref (vector-ref vec  (+ fila2 1)) (- col2 1)) 0) #\D)))
+          (and (and(equal? rey-en-jaque "R0B") (equal? (string-ref (vector-ref (vector-ref vec (+ fila2 1)) (- col2 1)) 2) #\N)) (or (equal? (string-ref (vector-ref (vector-ref vec  (+ fila2 1)) (- col2 1)) 0) #\D) (equal? (string-ref (vector-ref (vector-ref vec (+ fila2 1)) (- col2 1)) 0) #\P))))
+          #t
+          #f))))
+;--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+;evalua la posición diagonal inferior derecha, esto en busca de una dama, o peón si el rey es balanco, de lo contrario retorna #f
+;--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+(define (diagonal2-der-aba vec fila2 col2 rey-en-jaque )
+     (if (or (>= (+ fila2 1) 9) (>= (+ col2 1) 9))
+       #f  
+    (if (or (> fila2 8) (< fila2 1) (> col2 8) (< col2 1))
+      #f
+       (if(or (and (and(equal? rey-en-jaque "R0N") (equal? (string-ref (vector-ref (vector-ref vec (+ fila2 1)) (+ col2 1)) 2) #\B)) (or (equal? (string-ref (vector-ref (vector-ref vec  (+ fila2 1)) (+ col2 1)) 0) #\D)))
+          (and (and(equal? rey-en-jaque "R0B") (equal? (string-ref (vector-ref (vector-ref vec (+ fila2 1)) (+ col2 1)) 2) #\N)) (or (equal? (string-ref (vector-ref (vector-ref vec  (+ fila2 1)) (+ col2 1)) 0) #\D) (equal? (string-ref (vector-ref (vector-ref vec (+ fila2 1)) (+ col2 1)) 0) #\P))))
+          #t
+          #f))))
+
+
+;----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+;Estas cuatro funciones revisan si hay un Rey enemigo en la posicisiones en todas las direcciones del rey que tiene el turno (caso extraordinario)
+;----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+(define (arriba2 vec fila2 col2 rey-en-jaque )
+    (if (< (- fila2 1) 0)
+        #f
+  (if (or (> fila2 8) (< fila2 1) (> col2 8) (< col2 1))
+      #f
+      (if(or (and (and(equal? rey-en-jaque "R0N") (equal? (string-ref (vector-ref (vector-ref vec (- fila2 1)) col2) 2) #\B)) (equal? (string-ref (vector-ref (vector-ref vec (- fila2 1)) col2) 0) #\R))
+         (and (and(equal? rey-en-jaque "R0B") (equal? (string-ref (vector-ref (vector-ref vec (- fila2 1)) col2) 2) #\N)) (equal? (string-ref (vector-ref (vector-ref vec (- fila2 1)) col2) 0) #\R)))
+         #t
+         #f))))
+
+
+
+
+
+(define (abajo2 vec fila2 col2 rey-en-jaque )
+    (if (>= (+ fila2 1) 9)
+        #f
+  (if (or (> fila2 8) (< fila2 1) (> col2 8) (< col2 1))
+      #f
+          (if(or (and (and(equal? rey-en-jaque "R0N") (equal? (string-ref (vector-ref (vector-ref vec (+ fila2 1)) col2) 2) #\B)) (equal? (string-ref (vector-ref (vector-ref vec (+ fila2 1)) col2) 0) #\R))
+             (and (and(equal? rey-en-jaque "R0B") (equal? (string-ref (vector-ref (vector-ref vec (+ fila2 1)) col2) 2) #\N)) (equal? (string-ref (vector-ref (vector-ref vec (+ fila2 1)) col2) 0) #\R)))
+             #t
+             #f))))
+
+
+
+
+
+
+(define (izquierda2 vec fila2 col2 rey-en-jaque )
+    (if (< (- col2 1) 0)
+        #f
+     (if (or (> fila2 8) (< fila2 1) (> col2 8) (< col2 1))
+      #f
+      (if(or (and (and(equal? rey-en-jaque "R0N") (equal? (string-ref (vector-ref (vector-ref vec fila2) (- col2 1)) 2) #\B)) (equal? (string-ref (vector-ref (vector-ref vec  fila2 ) (- col2 1)) 0) #\R))
+         (and (and(equal? rey-en-jaque "R0B") (equal? (string-ref (vector-ref (vector-ref vec fila2) (- col2 1)) 2) #\N)) (equal? (string-ref (vector-ref (vector-ref vec  fila2 ) (- col2 1)) 0) #\R)))
+         #t
+         #f))))
+
+
+
+
+
+(define (derecha2 vec fila2 col2 rey-en-jaque )
+    (if (>= (+ col2 1) 9)
+        #f
+     (if (or (> fila2 8) (< fila2 1) (> col2 8) (< col2 1))
+      #f
+      (if(or (and (and(equal? rey-en-jaque "R0N") (equal? (string-ref (vector-ref (vector-ref vec fila2) (+ col2 1)) 2) #\B)) (equal? (string-ref (vector-ref (vector-ref vec  fila2 ) (+ col2 1)) 0) #\R))
+         (and (and(equal? rey-en-jaque "R0B") (equal? (string-ref (vector-ref (vector-ref vec fila2) (+ col2 1)) 2) #\N)) (equal? (string-ref (vector-ref (vector-ref vec  fila2 ) (+ col2 1)) 0) #\R)))
+         #t
+         #f))))
+
+;--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+; A continuación se presentan 8 funciones que representan todas las posibilades de ataque del caballo
+;--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+(define (caballo1 vec fila2 col2 rey-en-jaque )
+  (if (or (< (- fila2 2) 1) (> (+ col2 1) 8))
+      #f
+      (if (or (> fila2 8) (< fila2 1) (> col2 8) (< col2 1))
+      #f
+              (if(or (and (and(equal? rey-en-jaque "R0N") (equal? (string-ref (vector-ref (vector-ref vec (- fila2 2)) (+ col2 1)) 2) #\B)) (equal? (string-ref (vector-ref (vector-ref vec (- fila2 2)) (+ col2 1)) 0) #\C))
+                 (and (and(equal? rey-en-jaque "R0B") (equal? (string-ref (vector-ref (vector-ref vec (- fila2 2)) (+ col2 1)) 2) #\N)) (equal? (string-ref (vector-ref (vector-ref vec (- fila2 2)) (+ col2 1)) 0) #\C)))
+                 #t
+                 #f))))
+
+
+
+(define (caballo2 vec fila2 col2 rey-en-jaque )
+  (if (or (< (- fila2 1) 1) (> (+ col2 2) 8))
+      #f
+      (if (or (> fila2 8) (< fila2 1) (> col2 8) (< col2 1))
+      #f
+              (if(or (and (and(equal? rey-en-jaque "R0N") (equal? (string-ref (vector-ref (vector-ref vec (- fila2 1)) (+ col2 2)) 2) #\B)) (equal? (string-ref (vector-ref (vector-ref vec (- fila2 1)) (+ col2 2)) 0) #\C))
+                 (and (and(equal? rey-en-jaque "R0B") (equal? (string-ref (vector-ref (vector-ref vec (- fila2 1)) (+ col2 2)) 2) #\N)) (equal? (string-ref (vector-ref (vector-ref vec (- fila2 1)) (+ col2 2)) 0) #\C)))
+                 #t
+                 #f))))
+
+
+
+(define (caballo3 vec fila2 col2 rey-en-jaque )
+  (if (or (> (+ fila2 1) 8) (> (+ col2 2) 8))
+      #f
+      (if (or (> fila2 8) (< fila2 1) (> col2 8) (< col2 1))
+      #f
+              (if(or (and (and(equal? rey-en-jaque "R0N") (equal? (string-ref (vector-ref (vector-ref vec (+ fila2 1)) (+ col2 2)) 2) #\B)) (equal? (string-ref (vector-ref (vector-ref vec (+ fila2 1)) (+ col2 2)) 0) #\C))
+                 (and (and(equal? rey-en-jaque "R0B") (equal? (string-ref (vector-ref (vector-ref vec (+ fila2 1)) (+ col2 2)) 2) #\N)) (equal? (string-ref (vector-ref (vector-ref vec (+ fila2 1)) (+ col2 2)) 0) #\C)))
+                 #t
+                 #f))))
+
+
+
+(define (caballo4 vec fila2 col2 rey-en-jaque )
+  (if (or (> (+ fila2 2) 8) (> (+ col2 1) 8))
+      #f
+      (if (or (> fila2 8) (< fila2 1) (> col2 8) (< col2 1))
+      #f
+              (if(or (and (and(equal? rey-en-jaque "R0N") (equal? (string-ref (vector-ref (vector-ref vec (+ fila2 2)) (+ col2 1)) 2) #\B)) (equal? (string-ref (vector-ref (vector-ref vec (+ fila2 2)) (+ col2 1)) 0) #\C))
+                 (and (and(equal? rey-en-jaque "R0B") (equal? (string-ref (vector-ref (vector-ref vec (+ fila2 2)) (+ col2 1)) 2) #\N)) (equal? (string-ref (vector-ref (vector-ref vec (+ fila2 2)) (+ col2 1)) 0) #\C)))
+                 #t
+                 #f))))
+
+
+
+(define (caballo5 vec fila2 col2 rey-en-jaque )
+  (if (or (> (+ fila2 2) 8) (< (- col2 1) 1))
+      #f
+      (if (or (> fila2 8) (< fila2 1) (> col2 8) (< col2 1))
+      #f
+              (if(or (and (and(equal? rey-en-jaque "R0N") (equal? (string-ref (vector-ref (vector-ref vec (+ fila2 2)) (- col2 1)) 2) #\B)) (equal? (string-ref (vector-ref (vector-ref vec (+ fila2 2)) (- col2 1)) 0) #\C))
+                 (and (and(equal? rey-en-jaque "R0B") (equal? (string-ref (vector-ref (vector-ref vec (+ fila2 2)) (- col2 1)) 2) #\N)) (equal? (string-ref (vector-ref (vector-ref vec (+ fila2 2)) (- col2 1)) 0) #\C)))
+                 #t
+                 #f))))
+
+
+
+(define (caballo6 vec fila2 col2 rey-en-jaque )
+  (if (or (> (+ fila2 1) 8) (< (- col2 2) 1))
+      #f
+      (if (or (> fila2 8) (< fila2 1) (> col2 8) (< col2 1))
+      #f
+              (if(or (and (and(equal? rey-en-jaque "R0N") (equal? (string-ref (vector-ref (vector-ref vec (+ fila2 1)) (- col2 2)) 2) #\B)) (equal? (string-ref (vector-ref (vector-ref vec (+ fila2 1)) (- col2 2)) 0) #\C))
+                 (and (and(equal? rey-en-jaque "R0B") (equal? (string-ref (vector-ref (vector-ref vec (+ fila2 1)) (- col2 2)) 2) #\N)) (equal? (string-ref (vector-ref (vector-ref vec (+ fila2 1)) (- col2 2)) 0) #\C)))
+                 #t
+                 #f))))
+
+
+
+(define (caballo7 vec fila2 col2 rey-en-jaque )
+  (if (or (< (- fila2 1) 1) (< (- col2 2) 1))
+      #f
+      (if (or (> fila2 8) (< fila2 1) (> col2 8) (< col2 1))
+      #f
+              (if(or (and (and(equal? rey-en-jaque "R0N") (equal? (string-ref (vector-ref (vector-ref vec (- fila2 1)) (- col2 2)) 2) #\B)) (equal? (string-ref (vector-ref (vector-ref vec (- fila2 1)) (- col2 2)) 0) #\C))
+                 (and (and(equal? rey-en-jaque "R0B") (equal? (string-ref (vector-ref (vector-ref vec (- fila2 1)) (- col2 2)) 2) #\N)) (equal? (string-ref (vector-ref (vector-ref vec (- fila2 1)) (- col2 2)) 0) #\C)))
+                 #t
+                 #f))))
+
+
+(define (caballo8 vec fila2 col2 rey-en-jaque )
+  (if (or (< (- fila2 2) 1) (< (- col2 1) 1))
+      #f
+      (if (or (> fila2 8) (< fila2 1) (> col2 8) (< col2 1))
+      #f
+              (if(or (and (and(equal? rey-en-jaque "R0N") (equal? (string-ref (vector-ref (vector-ref vec (- fila2 2)) (- col2 1)) 2) #\B)) (equal? (string-ref (vector-ref (vector-ref vec (- fila2 2)) (- col2 1)) 0) #\C))
+                 (and (and(equal? rey-en-jaque "R0B") (equal? (string-ref (vector-ref (vector-ref vec (- fila2 2)) (- col2 1)) 2) #\N)) (equal? (string-ref (vector-ref (vector-ref vec (- fila2 2)) (- col2 1)) 0) #\C)))
+                 #t
+                 #f))))
+;--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+;incia el juego
+;--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------                      
+(buscador 1)
+                   
+ 
